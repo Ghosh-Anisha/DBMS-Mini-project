@@ -18,13 +18,14 @@ create table Books (
 create table PublicationHouse (
 	BookID int references Books(BookID),
 	Publication_House VARCHAR,
-	PRIMARY KEY (BookID,PublisherName)
+	ISBN VARCHAR(10) references Books(ISBN),
+	PRIMARY KEY (BookID,PublisherName, Publication_House)
 );
 
 create table Produces(
 	ISBN VARCHAR(10) references Books(ISBN),
 	Publication_House VARCHAR references PublicationHouse(Publication_House),
-	PRIMARY KEY(ISBN, Publication_House)
+	PRIMARY KEY(ISBN,BookID, Publication_House)
 );
 
 create table Customer(
@@ -45,16 +46,14 @@ create table RequestForBooks(
 create table Buys(
 	CustomerID references Customer(CustomerID),
 	ISBN VARCHAR(10) references Books(ISBN),
-	BookID int references Books(BookID),
-	PRIMARY KEY(CustomerID, ISBN, BookID)
+	PRIMARY KEY(CustomerID, ISBN)
 );
 
 create table CustomerFeedback(
 	CustomerID references Customer(CustomerID),
 	CustDesc VARCHAR,
 	ISBN VARCHAR(10) references Books(ISBN),
-	BookID INT references Books(BookID),
-	PRIMARY KEY(CustomerID, ISBN, BookID)
+	PRIMARY KEY(CustomerID, ISBN)
 );
 
 create table Cart(
