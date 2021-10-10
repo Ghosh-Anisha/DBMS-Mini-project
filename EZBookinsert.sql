@@ -14,16 +14,30 @@ insert into books values('345432401', 22028, 'Omerta', 'Fiction, Mystery-Crime',
 insert into books values('812511751', 176892, 'The Elvenbane', 'Fantasy, Fantasy-Dragons', 'Andre Norton, Mercedes Lackey',  1991, 50,3.95);
 insert into books values('451822196', 550844, 'Cycle of the Werewolf', 'Horror, Fiction ', 'Stephen King, Bernie Wrightson',  1983, 50, 3.65);
 
-insert into publisherdetails values(630104, 'Simon  Schuster Books for Young Readers');
-insert into publisherdetails values(9487, 'Thomas Nelson');
-insert into publisherdetails values(39030, 'Tor Books');
-insert into publisherdetails values(998, 'Gallery Books');
-insert into publisherdetails values(311164, 'Arrow');
-insert into publisherdetails values(377993, 'Algonquin Books');
-insert into publisherdetails values(821003, 'E.P. Dutton');
-insert into publisherdetails values(24876258, 'Roc');
-insert into publisherdetails values(80631, 'Pocket Star');
-insert into publisherdetails values(81048, 'Villard Books');
-insert into publisherdetails values(22028, 'Ballantine Books');
-insert into publisherdetails values(176892, 'Tor Books');
-insert into publisherdetails values(550844, 'Signet Books');
+insert into PublicationHouse values(630104, 'Simon  Schuster Books for Young Readers');
+insert into PublicationHouse values(9487, 'Thomas Nelson');
+insert into PublicationHouse values(39030, 'Tor Books');
+insert into PublicationHouse values(998, 'Gallery Books');
+insert into PublicationHouse values(311164, 'Arrow');
+insert into PublicationHouse values(377993, 'Algonquin Books');
+insert into PublicationHouse values(821003, 'E.P. Dutton');
+insert into PublicationHouse values(24876258, 'Roc');
+insert into PublicationHouse values(80631, 'Pocket Star');
+insert into PublicationHouse values(81048, 'Villard Books');
+insert into PublicationHouse values(22028, 'Ballantine Books');
+insert into PublicationHouse values(176892, 'Tor Books');
+insert into PublicationHouse values(550844, 'Signet Books');
+
+insert into Produces values('1416950419', 'Simon  Schuster Books for Young Readers')
+insert into Produces values('1595542329','Thomas Nelson');
+insert into Produces values('765354950', 'Tor Books');
+insert into Produces values('671015206','Gallery Books');
+insert into Produces values('99468034',  'Arrow');
+insert into Produces values('1565124138', 'Algonquin Books');
+insert into Produces values('525444459',  'E.P. Dutton');
+insert into Produces values('451466802', 'Roc');
+insert into Produces values('743454154',  'Pocket Star');
+insert into Produces values('375756485',  'Villard Books' );
+insert into Produces values('345432401',  'Ballantine Books');
+insert into Produces values('812511751', 'Tor Books');
+insert into Produces values('451822196', 'Signet Books');
