@@ -41,3 +41,19 @@ insert into Produces values('375756485',  'Villard Books' );
 insert into Produces values('345432401',  'Ballantine Books');
 insert into Produces values('812511751', 'Tor Books');
 insert into Produces values('451822196', 'Signet Books');
+
+insert into Customer values(1,'Alice','1234567890','alice@gmail.com');
+insert into Customer values(2,'Bob','3219092309','bob@gmail.com');
+insert into Customer values(3,'Chris','8923920139','chris@gmail.com');
+insert into Customer values(4,'Denise','2983981019','densie@gmail.com');
+insert into Customer values(5,'Evan','1387109892','evan@gmail.com');
+insert into Customer values(6,'Franny','3170831912','franny@gmail.com');
+insert into Customer values(7,'Henry','1378289383','henry@gmail.com');
+insert into Customer values(8,'Gina','9873171893','gina@gmail.com');
+insert into Customer values(9,'Ivan','8398430911','ivan@gmail.com');
+insert into Customer values(10,'Jane','2383090139','jane@gmail.com');
+insert into Customer values(11,'Kenny','6892713310','kenny@gmail.com');
+
+
+
+
