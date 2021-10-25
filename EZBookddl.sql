@@ -31,7 +31,7 @@ create table Produces(
 create table Customer(
 	CustomerID INT PRIMARY KEY,
 	CustName VARCHAR(20),
-	CustNumber INT,
+	CustNumber VARCHAR(10),
 	EmailID VARCHAR(40)
 );
 
