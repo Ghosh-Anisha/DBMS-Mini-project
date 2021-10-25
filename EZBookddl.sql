@@ -4,8 +4,8 @@ create database ezbook;
 \c ezbook
 
 create table Books (
-	ISBN VARCHAR(10) NOT NULL,
-	BookID INT,
+	ISBN VARCHAR(10) NOT NULL UNIQUE,
+	BookID INT UNIQUE,
 	BName VARCHAR,
 	Genre VARCHAR(100),
 	Author VARCHAR,
@@ -16,16 +16,16 @@ create table Books (
 );
 
 create table PublicationHouse (
-	BookID int references Books(BookID),
+	BookID int unique references Books(BookID),
 	Publication_House VARCHAR,
 	ISBN VARCHAR(10) references Books(ISBN),
-	PRIMARY KEY (BookID,PublisherName, Publication_House)
+	PRIMARY KEY (BookID,Publication_House)
 );
 
 create table Produces(
 	ISBN VARCHAR(10) references Books(ISBN),
 	Publication_House VARCHAR references PublicationHouse(Publication_House),
-	PRIMARY KEY(ISBN,BookID, Publication_House)
+	PRIMARY KEY(ISBN,Publication_House)
 );
 
 create table Customer(
@@ -38,7 +38,7 @@ create table Customer(
 create table RequestForBooks(
 	RequestID INT,
 	Book_title VARCHAR,
-	CustomerID references Customer(CustomerID),
+	CustomerID INT references Customer(CustomerID),
 	ISBN VARCHAR(10) references Books(ISBN),
 	PRIMARY KEY(RequestID, CustomerID)
 );
@@ -74,7 +74,7 @@ create table Bills(
 create table BestSellers(
 	BillNumber INT references Bills(BillNumber),
 	ISBN VARCHAR(10) references Buys(ISBN),
-	PRIMARY KEY (BilNumber, ISBN)
+	PRIMARY KEY (BillNumber, ISBN)
 );
 
 create table CountBooks(
