@@ -16,8 +16,8 @@ create table Books (
 );
 
 create table PublicationHouse (
-	BookID int unique references Books(BookID),
-	Publication_House VARCHAR,
+	BookID int unique not null references Books(BookID),
+	Publication_House VARCHAR not null,
 	ISBN VARCHAR(10) references Books(ISBN),
 	PRIMARY KEY (BookID,Publication_House)
 );
@@ -44,20 +44,20 @@ create table RequestForBooks(
 );
 
 create table Buys(
-	CustomerID references Customer(CustomerID),
-	ISBN VARCHAR(10) references Books(ISBN),
+	CustomerID INT not null references Customer(CustomerID),
+	ISBN VARCHAR(10) unique references Books(ISBN),
 	PRIMARY KEY(CustomerID, ISBN)
 );
 
 create table CustomerFeedback(
-	CustomerID references Customer(CustomerID),
+	CustomerID INT references Customer(CustomerID),
 	CustDesc VARCHAR,
 	ISBN VARCHAR(10) references Books(ISBN),
 	PRIMARY KEY(CustomerID, ISBN)
 );
 
 create table Cart(
-	CustomerID references Customer(CustomerID),
+	CustomerID INT references Customer(CustomerID),
 	CartID INT PRIMARY KEY,
 	BookID INT references Books(BookID),
 	Book_Count INT
