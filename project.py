@@ -82,16 +82,13 @@ full_message_temp ="""
 
 
 
-
-"""A Simple CRUD  Blog"""
-
 st.markdown(html_temp.format('royalblue','white'),unsafe_allow_html=True)
 
 menu = ["Home","Shop Library","Add books (only Admin)","Search Books","Request Books","Feedback"]
 choice = st.sidebar.selectbox("Menu",menu)
 
 if choice == "Home":
-	user=st.text_input("Enter Choice")
+	st.text(" ")
 	if st.button("Home"):
 		choice = "Home"
 	if st.button("Shop Library"):
@@ -106,40 +103,59 @@ if choice == "Home":
 		choice = "Feedback"
 
 
+
+if choice == "Home":
+	st.text('Welcome to EzBook - An Online Book Store')
+
 if choice == "Shop Library":
 	st.subheader("Shop Library")
 	all_titles = [i[0] for i in view_all_titles()]
-	postlist = st.sidebar.selectbox("View Posts",all_titles)
+	postlist = st.sidebar.selectbox("View Books",all_titles)
 	post_result = get_blog_by_title(postlist)
 	for i in post_result:
 		b_author = i[0]
 		b_title = i[1]
-		b_article = i[2]
-		b_post_date = i[3]
-		st.text("Reading Time:{}".format(readingTime(b_article)))
-		st.markdown(head_message_temp.format(b_title,b_author,b_post_date),unsafe_allow_html=True)
-		st.markdown(full_message_temp.format(b_article),unsafe_allow_html=True)
+		b_price = i[2]
+		b_date_of_publication = i[3]
+		b_rating=i[4]
+		b_genre=i[5]
+		b_isbn=i[6]
+		#st.text("Reading Time:{}".format(readingTime(b_article)))
+		st.markdown(head_message_temp.format(b_title,b_author,b_price,b_date_of_publication,b_genre,b_rating,b_isbn),unsafe_allow_html=True)
+		#st.markdown(full_message_temp.format(b_article),unsafe_allow_html=True)
+		if st.button("Add to cart"):
+			cust_id=add_to_cart(b_isbn)
+		if st.button("Checkout"):
+			billing(cust_id)
 
 
-
-if choice == "Add Posts":
-	st.subheader("Add Articles")
+if choice == "Add Books":
+	st.subheader("Add Books")
 	create_table()
+	# pwd=st.text_input("Enter Passsword:",type="password")
+	# if st.button("Login"):
+	# 	if(pwd=="admin1234"):
+			# st.subheader("Add Books")
 	blog_author = st.text_input("Enter Author Name",max_chars=50)
-	blog_title = st.text_input("Enter Post Title")
-	blog_article = st.text_area("Post Article Here",height=200)
-	blog_post_date = st.date_input("Date")
+	blog_title = st.text_input("Enter Book Title")
+	blog_price = st.text_input("Enter Price")
+	blog_rating=st.text_input("Enter Rating")
+	blog_date_of_publication=st.date_input("Enter Date of Publication")
+	blog_genre=st.text_input("Enter Genre")
+	blog_isbn = st.text_input("ISBN")
 	if st.button("Add"):
-		add_data(blog_author,blog_title,blog_article,blog_post_date)
+		add_data(blog_author,blog_title,blog_price,blog_rating,blog_date_of_publication,blog_genre,blog_isbn)
 		st.success("Post:{} saved".format(blog_title))	
+		# else:
+		# 	st.text("ACCESS DENIED")
 
 
 
 
-if choice == "Search":
-	st.subheader("Search Articles")
+if choice == "Search Books":
+	st.subheader("Search Books")
 	search_term = st.text_input('Enter Search Term')
-	search_choice = st.radio("Field to Search By",("title","author"))
+	search_choice = st.radio("Field to Search By",("title","author","genre"))
 	
 	if st.button("Search"):
 
@@ -147,63 +163,45 @@ if choice == "Search":
 			article_result = get_blog_by_title(search_term)
 		elif search_choice == "author":
 			article_result = get_blog_by_author(search_term)
+		elif search_choice=="genre":
+			article_result = get_blog_by_genre(search_term)
 
 
 		for i in article_result:
 			b_author = i[0]
 			b_title = i[1]
-			b_article = i[2]
-			b_post_date = i[3]
-			st.text("Reading Time:{}".format(readingTime(b_article)))
-			st.markdown(head_message_temp.format(b_title,b_author,b_post_date),unsafe_allow_html=True)
-			st.markdown(full_message_temp.format(b_article),unsafe_allow_html=True)
+			b_price = i[2]
+			b_date_of_publication = i[3]
+			b_rating=i[4]
+			b_genre=i[5]
+			b_isbn=i[6]
+			#st.text("Reading Time:{}".format(readingTime(b_article)))
+			#st.markdown(head_message_temp.format(b_title,b_author,b_post_date),unsafe_allow_html=True)
+			st.markdown(head_message_temp.format(b_title,b_author,b_price,b_date_of_publication,b_genre,b_rating,b_isbn),unsafe_allow_html=True)
+		#st.markdown(full_message_temp.format(b_article),unsafe_allow_html=True)
+			if st.button("Add to cart"):
+				cust_id=add_to_cart(b_isbn)
+			if st.button("Checkout"):
+				billing(cust_id)
+			#st.markdown(full_message_temp.format(b_article),unsafe_allow_html=True)
 
 
 
 
-if choice == "Manage Blog":
-	st.subheader("Manage Articles")
-
-	result = view_all_notes()
-	clean_db = pd.DataFrame(result,columns=["Author","Title","Articles","Post Date"])
-	st.dataframe(clean_db)
-
-	unique_titles = [i[0] for i in view_all_titles()]
-	delete_blog_by_title = st.selectbox("Unique Title",unique_titles)
-	new_df = clean_db
-	if st.button("Delete"):
-		delete_data(delete_blog_by_title)
-		st.warning("Deleted: '{}'".format(delete_blog_by_title))
+if choice == "Request Books":
+	st.subheader("Request Books")
+	book_name = st.text_input("Enter Book Name")
+	if st.button("Add"):
+		add_data(book_name)
+		st.success("Post:{} saved".format(blog_title))	
 
 
-	if st.checkbox("Metrics"):
-		
-		new_df['Length'] = new_df['Articles'].str.len()
-		st.dataframe(new_df)
-
-
-		st.subheader("Author Stats")
-		new_df["Author"].value_counts().plot(kind='bar')
-		st.pyplot()
-
-		st.subheader("Author Stats")
-		new_df['Author'].value_counts().plot.pie(autopct="%1.1f%%")
-		st.pyplot()
-
-	if st.checkbox("Word Cloud"):
-		st.subheader("Generate Word Cloud")
-		# text = new_df['Articles'].iloc[0]
-		text = ','.join(new_df['Articles'])
-		wordcloud = WordCloud().generate(text)
-		plt.imshow(wordcloud,interpolation='bilinear')
-		plt.axis("off")
-		st.pyplot()
-
-	if st.checkbox("BarH Plot"):
-		st.subheader("Length of Articles")
-		new_df = clean_db
-		new_df['Length'] = new_df['Articles'].str.len()
-		barh_plot = new_df.plot.barh(x='Author',y='Length',figsize=(20,10))
-		st.pyplot()
+if choice == "Feedback":
+	st.subheader("Feedback")
+	book_name = st.text_input("Enter Book Name")
+	feedback = st.text_area('Enter Feedback')
+	if st.button("Add"):
+		add_data(book_name,feedback)
+		st.success("Post:{} saved".format(blog_title))
 
 
