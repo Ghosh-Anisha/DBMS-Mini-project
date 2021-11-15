@@ -128,10 +128,14 @@ if choice == "Shop Library":
 		st.markdown(head_message_temp.format(b_title,b_author,b_price,b_date_of_publication,b_genre,b_rating,b_isbn),unsafe_allow_html=True)
 		#st.markdown(full_message_temp.format(b_article),unsafe_allow_html=True)
 		if st.button("Add to cart"):
-			cust_id=add_to_cart(b_isbn)
+			cust_no=st.text_input("Enter Contact no")
+			add_to_cart(cust_no,b_isbn)
 		if st.button("Checkout"):
-			billing(cust_id)
-
+			cust_name=st.text_input("Enter Name")
+			cust_no=st.text_input("Enter Contact no")
+			cust_addr=st.text_area("Enter address")
+			amount=billing(cust_no,cust_name,cust_addr)
+			st.success("Total amount: {}".format(amount))
 
 if choice == "Add Books":
 	st.subheader("Add Books")
@@ -184,9 +188,14 @@ if choice == "Search Books":
 			st.markdown(head_message_temp.format(b_title,b_author,b_price,b_date_of_publication,b_genre,b_rating,b_isbn),unsafe_allow_html=True)
 		#st.markdown(full_message_temp.format(b_article),unsafe_allow_html=True)
 			if st.button("Add to cart"):
-				cust_id=add_to_cart(b_isbn)
+				cust_no=st.text_input("Enter Contact no")
+				add_to_cart(cust_no,b_isbn)
 			if st.button("Checkout"):
-				billing(cust_id)
+				cust_name=st.text_input("Enter Name")
+				cust_no=st.text_input("Enter Contact no")
+				cust_addr=st.text_area("Enter address")
+				amount=billing(cust_no,cust_name,cust_addr)
+				st.success("Total amount: {}".format(amount))
 			#st.markdown(full_message_temp.format(b_article),unsafe_allow_html=True)
 
 
@@ -195,17 +204,19 @@ if choice == "Search Books":
 if choice == "Request Books":
 	st.subheader("Request Books")
 	book_name = st.text_input("Enter Book Name")
+	cust_no=st.text_input("Enter Contact no")
 	if st.button("Add"):
-		add_data(book_name)
-		st.success("Post:{} saved".format(blog_title))	
+		request_for_books(cust_no,book_name)
+		st.success("Post:{} saved".format(book_name))	
 
 
 if choice == "Feedback":
 	st.subheader("Feedback")
+	cust_no = st.text_input("Enter contact no")
 	book_name = st.text_input("Enter Book Name")
 	feedback = st.text_area('Enter Feedback')
 	if st.button("Add"):
-		add_data(book_name,feedback)
-		st.success("Post:{} saved".format(blog_title))
+		add_feedback(cust_no,book_name,feedback)
+		st.success("Post:{} saved".format(feedback))
 
 
