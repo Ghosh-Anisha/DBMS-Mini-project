@@ -45,6 +45,14 @@ html_temp = """
 <h1 style="color:{};text-align:center;">EzBook </h1>
 </div>
 """
+page_bg_img = '''
+<style>
+body {
+background-image: url("https://images.unsplash.com/photo-1542281286-9e0a16bb7366%22);
+background-size: cover;
+}
+</style>
+'''
 title_temp ="""
 <div style="background-color:#464e5f;padding:10px;border-radius:10px;margin:10px;">
 <h4 style="color:white;text-align:center;">{}</h1>
@@ -85,14 +93,30 @@ full_message_temp ="""
 """
 
 
+st.markdown(html_temp.format('rgb(0,139,139)','white'),unsafe_allow_html=True)
 
-st.markdown(html_temp.format('DarkMagenta','white'),unsafe_allow_html=True)
+col1, col2, col3 = st.columns([1,1,1])
+col2.image("logo1.jpg", use_column_width=True, width = 400)
+
+# st.image("logo1.jpg", width=400)
 
 menu = ["Home","Shop Library","Add books (only Admin)","Search Books","Request Books","Feedback"]
 choice = st.sidebar.selectbox("Menu",menu)
 
 if choice == "Home":
-	st.text(" ")
+	#Button Formatting 
+	st.text(" ") 
+
+	m = st.markdown("""
+<style>
+div.stButton > button:first-child {
+    background-color: rgb(0,206,209);
+    color:black;
+}
+
+</style>""", unsafe_allow_html=True)
+
+
 	if st.button("Home"):
 		choice = "Home"
 	if st.button("Shop Library"):
@@ -218,5 +242,3 @@ if choice == "Feedback":
 	if st.button("Add"):
 		add_feedback(cust_no,book_name,feedback)
 		st.success("Post:{} saved".format(feedback))
-
-
