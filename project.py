@@ -1,42 +1,260 @@
 import streamlit as st
+import psycopg2
+from streamlit import cursor
+from datetime import date
 
-# DB
-import sqlite3
-conn = sqlite3.connect('data.db')
-c = conn.cursor()
+def createTableBooks():
+    connection1 = psycopg2.connect(database='ezbook',user='aanchalnarendran',host='127.0.0.1',port='5432')
+    connection1.autocommit = True
+    cursor = connection1.cursor()
 
+    sql = '''CREATE TABLE books(BookId int NOT NULL,
+    Title varchar(300),
+    CoverLink varchar(500),
+    Author varchar(500),
+    RatingCount int,
+    Rating float,
+    PublishingDate varchar(30),
+    Publisher varchar(200),
+    Genre varchar(200),
+    ISBN varchar(14));'''
 
+    cursor.execute(sql)
 
-def create_table():
-	c.execute('CREATE TABLE IF NOT EXISTS blogtable(author TEXT,title TEXT,article TEXT,postdate DATE)')
+    connection1.commit()
+    connection1.close()
 
-def add_data(author,title,article,postdate):
-	c.execute('INSERT INTO blogtable(author,title,article,postdate) VALUES (?,?,?,?)',(author,title,article,postdate))
-	conn.commit()
+def insertBooks():
 
-def view_all_notes():
-	c.execute('SELECT * FROM blogtable')
-	data = c.fetchall()
-	return data
+    connection3 = psycopg2.connect(database='ezbook',user='aanchalnarendran',host='127.0.0.1',port='5432')
+    connection3.autocommit = True
+    cursor = connection3.cursor()
 
-def view_all_titles():
-	c.execute('SELECT DISTINCT title FROM blogtable')
-	data = c.fetchall()
-	return data
+    sql2 = '''COPY books(BookId,Title,CoverLink,Author,RatingCount,Rating,PublishingDate,Publisher,Genre,ISBN)
+    FROM '/Users/aanchalnarendran/Desktop/Books.csv'
+    DELIMITER ','
+    CSV HEADER;'''
 
+    cursor.execute(sql2)
+    connection3.commit()
+    connection3.close()
 
-def get_blog_by_title(title):
-	c.execute('SELECT * FROM blogtable WHERE title="{}"'.format(title))
-	data = c.fetchall()
-	return data
-def get_blog_by_author(author):
-	c.execute('SELECT * FROM blogtable WHERE author="{}"'.format(author))
-	data = c.fetchall()
-	return data
+def shopBooks():
+    connection2 = psycopg2.connect(database='ezbook',user='aanchalnarendran',host='127.0.0.1',port='5432')
+    connection2.autocommit = True
+    cursor = connection2.cursor()
 
-def delete_data(title):
-	c.execute('DELETE FROM blogtable WHERE title="{}"'.format(title))
-	conn.commit()
+    sql4 = '''select * from books;'''
+    cursor.execute(sql4)
+
+    for i in cursor.fetchall():
+        print(i)
+
+    connection2.commit()
+    connection2.close()
+
+def createCart():
+    connection1 = psycopg2.connect(database='ezbook',user='aanchalnarendran',host='127.0.0.1',port='5432')
+    connection1.autocommit = True
+    cursor = connection1.cursor()
+
+    sql = '''CREATE TABLE cart(PhoneNum varchar(15) NOT NULL,
+    isbn varchar(18),
+    book_count int,
+    price float);'''
+
+    cursor.execute(sql)
+
+    connection1.commit()
+    connection1.close()
+
+def insertIntoCart(cust_no,isbn):
+    connection2 = psycopg2.connect(database='ezbook',user='aanchalnarendran',host='127.0.0.1',port='5432')
+    connection2.autocommit = True
+    cursor = connection2.cursor()
+
+    sql4 = '''select rating from books where isbn = %s;'''
+    cursor.execute(sql4,(isbn,))
+    valuesCur = list(cursor.fetchall())
+    price = valuesCur[0][0]*100 
+    
+    sql5 = '''select * from cart where phonenum = %s and isbn = %s; '''
+    cursor.execute(sql5,(cust_no,isbn))
+    cartVal = list(cursor.fetchall())
+    
+    if len(cartVal) == 0:
+        curCount = 1
+        sql6 = '''insert into cart values(%s,%s,%s,%s)'''
+        cursor.execute(sql6,(cust_no,isbn,curCount,price))
+
+    else:
+        sql7 = '''update cart set book_count = book_count+1 , price=price+%s where phonenum=%s and isbn=%s'''
+        cursor.execute(sql7,(price,cust_no,isbn))
+    
+    connection2.commit()
+    connection2.close()
+
+def createHistory():
+    connection = psycopg2.connect(database='ezbook',user='aanchalnarendran',host='127.0.0.1',port='5432')
+    connection.autocommit = True
+    cursor = connection.cursor()
+
+    sql = '''CREATE TABLE history(PhoneNum varchar(15) NOT NULL,
+    date varchar(20),
+    isbn varchar(18),
+    book_count int,
+    price float);'''
+
+    cursor.execute(sql)
+
+    connection.commit()
+    connection.close()
+
+def insertIntoHistory(phonenum,isbn,count,price):
+    connection = psycopg2.connect(database='ezbook',user='aanchalnarendran',host='127.0.0.1',port='5432')
+    connection.autocommit = True
+    cursor = connection.cursor()
+
+    curDate = date.today()
+    sql = '''insert into history values(%s,%s,%s,%s,%s);'''
+    cursor.execute(sql,(phonenum,curDate,isbn,count,price))
+
+    connection.commit()
+    connection.close()
+
+def generateBill(cust_no):
+    connection = psycopg2.connect(database='ezbook',user='aanchalnarendran',host='127.0.0.1',port='5432')
+    connection.autocommit = True
+    cursor = connection.cursor()
+
+    #createBill
+    sql = '''select * from cart where phonenum=%s;'''
+    cursor.execute(sql,(cust_no,))
+    listValues = cursor.fetchall()
+    
+    totalPrice = 0.0
+    curDate = date.today()
+    for i in range(len(listValues)):
+        totalPrice+= listValues[i][-1]
+        sql1 = '''insert into history values (%s,%s,%s,%s,%s);'''
+        cursor.execute(sql1,(listValues[i][0],curDate,listValues[i][1],listValues[i][2],listValues[i][3]))
+
+    sql3 = '''delete from cart where phonenum=%s;'''
+    cursor.execute(sql3,(cust_no,))
+
+    connection.commit()
+    connection.close()
+    return(listValues,totalPrice)
+
+def addBook(bookid,title,coverlink,author,ratingcount,rating,publishingdate,publisher,genre,isbn):
+    connection = psycopg2.connect(database='ezbook',user='aanchalnarendran',host='127.0.0.1',port='5432')
+    connection.autocommit = True
+    cursor = connection.cursor()
+
+    sql = '''insert into books values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);'''
+    cursor.execute(sql,(bookid,title,coverlink,author,ratingcount,rating,publishingdate,publisher,genre,isbn))
+
+    connection.commit()
+    connection.close()
+
+def searchByTitle(title):
+    connection = psycopg2.connect(database='ezbook',user='aanchalnarendran',host='127.0.0.1',port='5432')
+    connection.autocommit = True
+    cursor = connection.cursor()
+
+    sql = '''select * from books where title=%s;'''
+    cursor.execute(sql,(title,))
+
+    for i in cursor.fetchall():
+        print(i)
+
+    connection.commit()
+    connection.close()
+
+def searchByAuthor(author):
+    connection = psycopg2.connect(database='ezbook',user='aanchalnarendran',host='127.0.0.1',port='5432')
+    connection.autocommit = True
+    cursor = connection.cursor()
+
+    sql = '''select * from books where author=%s;'''
+    cursor.execute(sql,(author,))
+
+    for i in cursor.fetchall():
+        print(i)
+
+    connection.commit()
+    connection.close()
+
+def searchByGenre(genre):
+    connection = psycopg2.connect(database='ezbook',user='aanchalnarendran',host='127.0.0.1',port='5432')
+    connection.autocommit = True
+    cursor = connection.cursor()
+
+    sql = '''select * from books where genre=%s;'''
+    cursor.execute(sql,(genre,))
+
+    for i in cursor.fetchall():
+        print(i)
+
+    connection.commit()
+    connection.close()
+
+def createRequest():
+    connection = psycopg2.connect(database='ezbook',user='aanchalnarendran',host='127.0.0.1',port='5432')
+    connection.autocommit = True
+    cursor = connection.cursor()
+
+    sql = '''CREATE TABLE request(PhoneNum varchar(15) NOT NULL,
+    title varchar(300));'''
+
+    cursor.execute(sql)
+
+    connection.commit()
+    connection.close()
+
+def addRequest(cust_no,title):
+    connection = psycopg2.connect(database='ezbook',user='aanchalnarendran',host='127.0.0.1',port='5432')
+    connection.autocommit = True
+    cursor = connection.cursor()
+
+    sql = '''insert into request values(%s,%s);'''
+    cursor.execute(sql,(cust_no,title))
+
+    connection.commit()
+    connection.close()
+
+def createFeedback():
+    connection = psycopg2.connect(database='ezbook',user='aanchalnarendran',host='127.0.0.1',port='5432')
+    connection.autocommit = True
+    cursor = connection.cursor()
+
+    sql = '''CREATE TABLE feedback(PhoneNum varchar(15) NOT NULL,
+    title varchar(300),
+    feedback varchar(2000));'''
+
+    cursor.execute(sql)
+
+    connection.commit()
+    connection.close()
+
+def addFeedback(cust_no,title,feedback):
+    connection = psycopg2.connect(database='ezbook',user='aanchalnarendran',host='127.0.0.1',port='5432')
+    connection.autocommit = True
+    cursor = connection.cursor()
+
+    sql = '''insert into feedback values(%s,%s,%s);'''
+    cursor.execute(sql,(cust_no,title,feedback))
+
+    connection.commit()
+    connection.close()
+
+def buildDatabase(): #only execute once
+	createTableBooks()
+	insertBooks()
+	createCart()
+	createFeedback()
+	createHistory()
+	createRequest()
 
 
 # Layout Templates
@@ -137,9 +355,9 @@ if choice == "Home":
 
 if choice == "Shop Library":
 	st.subheader("Shop Library")
-	all_titles = [i[0] for i in view_all_titles()]
+	all_titles = [i[0] for i in shopBooks()]
 	postlist = st.sidebar.selectbox("View Books",all_titles)
-	post_result = get_blog_by_title(postlist)
+	post_result = shopBooks(postlist)
 	for i in post_result:
 		b_author = i[0]
 		b_title = i[1]
@@ -153,17 +371,17 @@ if choice == "Shop Library":
 		#st.markdown(full_message_temp.format(b_article),unsafe_allow_html=True)
 		if st.button("Add to cart"):
 			cust_no=st.text_input("Enter Contact no")
-			add_to_cart(cust_no,b_isbn)
+			insertIntoCart(cust_no,b_isbn) #done
 		if st.button("Checkout"):
 			cust_name=st.text_input("Enter Name")
 			cust_no=st.text_input("Enter Contact no")
 			cust_addr=st.text_area("Enter address")
-			amount=billing(cust_no,cust_name,cust_addr)
+			amount=generateBill(cust_no,cust_name,cust_addr) #done
 			st.success("Total amount: {}".format(amount))
 
 if choice == "Add Books":
 	st.subheader("Add Books")
-	create_table()
+	#create_table()
 	# pwd=st.text_input("Enter Passsword:",type="password")
 	# if st.button("Login"):
 	# 	if(pwd=="admin1234"):
@@ -176,7 +394,8 @@ if choice == "Add Books":
 	blog_genre=st.text_input("Enter Genre")
 	blog_isbn = st.text_input("ISBN")
 	if st.button("Add"):
-		add_data(blog_author,blog_title,blog_price,blog_rating,blog_date_of_publication,blog_genre,blog_isbn)
+		#done
+		addBook(blog_author,blog_title,blog_price,blog_rating,blog_date_of_publication,blog_genre,blog_isbn)
 		st.success("Post:{} saved".format(blog_title))	
 		# else:
 		# 	st.text("ACCESS DENIED")
@@ -192,11 +411,11 @@ if choice == "Search Books":
 	if st.button("Search"):
 
 		if search_choice == "title":
-			article_result = get_blog_by_title(search_term)
+			article_result = searchByTitle(search_term) #done
 		elif search_choice == "author":
-			article_result = get_blog_by_author(search_term)
+			article_result = searchByAuthor(search_term) #done
 		elif search_choice=="genre":
-			article_result = get_blog_by_genre(search_term)
+			article_result = searchByGenre(search_term) #done
 
 
 		for i in article_result:
@@ -213,12 +432,12 @@ if choice == "Search Books":
 		#st.markdown(full_message_temp.format(b_article),unsafe_allow_html=True)
 			if st.button("Add to cart"):
 				cust_no=st.text_input("Enter Contact no")
-				add_to_cart(cust_no,b_isbn)
+				insertIntoCart(cust_no,b_isbn) #done
 			if st.button("Checkout"):
 				cust_name=st.text_input("Enter Name")
 				cust_no=st.text_input("Enter Contact no")
 				cust_addr=st.text_area("Enter address")
-				amount=billing(cust_no,cust_name,cust_addr)
+				amount=generateBill(cust_no,cust_name,cust_addr) #done
 				st.success("Total amount: {}".format(amount))
 			#st.markdown(full_message_temp.format(b_article),unsafe_allow_html=True)
 
@@ -230,7 +449,7 @@ if choice == "Request Books":
 	book_name = st.text_input("Enter Book Name")
 	cust_no=st.text_input("Enter Contact no")
 	if st.button("Add"):
-		request_for_books(cust_no,book_name)
+		addRequest(cust_no,book_name) #done
 		st.success("Post:{} saved".format(book_name))	
 
 
@@ -240,5 +459,5 @@ if choice == "Feedback":
 	book_name = st.text_input("Enter Book Name")
 	feedback = st.text_area('Enter Feedback')
 	if st.button("Add"):
-		add_feedback(cust_no,book_name,feedback)
+		addFeedback(cust_no,book_name,feedback) 
 		st.success("Post:{} saved".format(feedback))
