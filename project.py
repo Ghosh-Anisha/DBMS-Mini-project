@@ -71,7 +71,11 @@ head_message_temp ="""
 <h4 style="color:white;text-align:center;">{}</h1>
 <img src="https://www.w3schools.com/howto/img_avatar.png" alt="Avatar" style="vertical-align: middle;float:left;width: 50px;height: 50px;border-radius: 50%;">
 <h6>Author:{}</h6> 
-<h6>Post Date: {}</h6> 
+<h6>Price: {}</h6> 
+<h6>Date of publication: {}</h6> 
+<h6>Genre: {}</h6> 
+<h6>Rating: {}</h6> 
+<h6>ISBN: {}</h6> 
 </div>
 """
 full_message_temp ="""
@@ -82,7 +86,7 @@ full_message_temp ="""
 
 
 
-st.markdown(html_temp.format('royalblue','white'),unsafe_allow_html=True)
+st.markdown(html_temp.format('DarkMagenta','white'),unsafe_allow_html=True)
 
 menu = ["Home","Shop Library","Add books (only Admin)","Search Books","Request Books","Feedback"]
 choice = st.sidebar.selectbox("Menu",menu)
