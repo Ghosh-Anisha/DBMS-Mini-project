@@ -358,45 +358,48 @@ if choice == "Shop Library":
 	all_titles = [i[0] for i in shopBooks()]
 	postlist = st.sidebar.selectbox("View Books",all_titles)
 	post_result = shopBooks(postlist)
-	for i in post_result:
-		b_author = i[0]
+	for i in post_result: #bookid,title,coverlink,author,ratingcount,rating,publishingdate,publisher,genre,isbn
+		b_id = i[0]
 		b_title = i[1]
-		b_price = i[2]
-		b_date_of_publication = i[3]
-		b_rating=i[4]
-		b_genre=i[5]
-		b_isbn=i[6]
-		#st.text("Reading Time:{}".format(readingTime(b_article)))
-		st.markdown(head_message_temp.format(b_title,b_author,b_price,b_date_of_publication,b_genre,b_rating,b_isbn),unsafe_allow_html=True)
-		#st.markdown(full_message_temp.format(b_article),unsafe_allow_html=True)
-		if st.button("Add to cart"):
+        b_coverlink=i[2]
+        b_author=i[3]
+        b_rating_count = i[4]
+        b_rating = i[5]
+        b_date_of_publication=i[6]
+        b_publisher=i[7]
+        b_genre=i[8]
+        b_isbn=i[9]
+        st.markdown(head_message_temp.format(b_id, b_title , b_coverlink, b_author ,b_rating_count , b_rating , b_date_of_publication , b_publisher , b_genre , b_isbn),unsafe_allow_html=True)
+        if st.button("Add to cart"):
 			cust_no=st.text_input("Enter Contact no")
-			insertIntoCart(cust_no,b_isbn) #done
-		if st.button("Checkout"):
+			insertIntoCart(cust_no,b_isbn) 
+        if st.button("Checkout"):
 			cust_name=st.text_input("Enter Name")
 			cust_no=st.text_input("Enter Contact no")
 			cust_addr=st.text_area("Enter address")
-			amount=generateBill(cust_no,cust_name,cust_addr) #done
+			amount=generateBill(cust_no,cust_name,cust_addr) 
 			st.success("Total amount: {}".format(amount))
 
 if choice == "Add Books":
-	st.subheader("Add Books")
-	#create_table()
+    st.subheader("Add Books")
+    #create_table()
 	# pwd=st.text_input("Enter Passsword:",type="password")
 	# if st.button("Login"):
 	# 	if(pwd=="admin1234"):
 			# st.subheader("Add Books")
-	blog_author = st.text_input("Enter Author Name",max_chars=50)
-	blog_title = st.text_input("Enter Book Title")
-	blog_price = st.text_input("Enter Price")
-	blog_rating=st.text_input("Enter Rating")
-	blog_date_of_publication=st.date_input("Enter Date of Publication")
-	blog_genre=st.text_input("Enter Genre")
-	blog_isbn = st.text_input("ISBN")
-	if st.button("Add"):
-		#done
-		addBook(blog_author,blog_title,blog_price,blog_rating,blog_date_of_publication,blog_genre,blog_isbn)
-		st.success("Post:{} saved".format(blog_title))	
+    b_id = st.text_input("Enter book_id")
+    b_title = st.text_input("Enter Book Title")
+    b_coverlink=st.text_input("Enter coberlink")
+    b_author=st.text_input("Enter Author")
+    b_rating_count = st.text_input("Enter Rating Count")
+    b_rating = st.text_input("Enter Rating")
+    b_date_of_publication=st.text_input("Enter Date of Publication")
+    b_publisher=st.text_input("Enter Publisher")
+    b_genre=st.text_input("Enter Genre")
+    b_isbn=st.text_input("ISBN")
+    if st.button("Add"):	
+        addBook(b_id, b_title , b_coverlink, b_author ,b_rating_count , b_rating , b_date_of_publication , b_publisher , b_genre , b_isbn)
+        st.success("Post:{} saved".format(b_title))	
 		# else:
 		# 	st.text("ACCESS DENIED")
 
@@ -411,11 +414,11 @@ if choice == "Search Books":
 	if st.button("Search"):
 
 		if search_choice == "title":
-			article_result = searchByTitle(search_term) #done
+			article_result = searchByTitle(search_term) 
 		elif search_choice == "author":
-			article_result = searchByAuthor(search_term) #done
+			article_result = searchByAuthor(search_term) 
 		elif search_choice=="genre":
-			article_result = searchByGenre(search_term) #done
+			article_result = searchByGenre(search_term) 
 
 
 		for i in article_result:
@@ -426,20 +429,17 @@ if choice == "Search Books":
 			b_rating=i[4]
 			b_genre=i[5]
 			b_isbn=i[6]
-			#st.text("Reading Time:{}".format(readingTime(b_article)))
-			#st.markdown(head_message_temp.format(b_title,b_author,b_post_date),unsafe_allow_html=True)
 			st.markdown(head_message_temp.format(b_title,b_author,b_price,b_date_of_publication,b_genre,b_rating,b_isbn),unsafe_allow_html=True)
-		#st.markdown(full_message_temp.format(b_article),unsafe_allow_html=True)
+	
 			if st.button("Add to cart"):
 				cust_no=st.text_input("Enter Contact no")
-				insertIntoCart(cust_no,b_isbn) #done
+				insertIntoCart(cust_no,b_isbn) 
 			if st.button("Checkout"):
 				cust_name=st.text_input("Enter Name")
 				cust_no=st.text_input("Enter Contact no")
 				cust_addr=st.text_area("Enter address")
-				amount=generateBill(cust_no,cust_name,cust_addr) #done
+				amount=generateBill(cust_no,cust_name,cust_addr) 
 				st.success("Total amount: {}".format(amount))
-			#st.markdown(full_message_temp.format(b_article),unsafe_allow_html=True)
 
 
 
@@ -449,7 +449,7 @@ if choice == "Request Books":
 	book_name = st.text_input("Enter Book Name")
 	cust_no=st.text_input("Enter Contact no")
 	if st.button("Add"):
-		addRequest(cust_no,book_name) #done
+		addRequest(cust_no,book_name) 
 		st.success("Post:{} saved".format(book_name))	
 
 
