@@ -361,19 +361,19 @@ if choice == "Shop Library":
 	for i in post_result: #bookid,title,coverlink,author,ratingcount,rating,publishingdate,publisher,genre,isbn
 		b_id = i[0]
 		b_title = i[1]
-        b_coverlink=i[2]
-        b_author=i[3]
-        b_rating_count = i[4]
-        b_rating = i[5]
-        b_date_of_publication=i[6]
-        b_publisher=i[7]
-        b_genre=i[8]
-        b_isbn=i[9]
-        st.markdown(head_message_temp.format(b_id, b_title , b_coverlink, b_author ,b_rating_count , b_rating , b_date_of_publication , b_publisher , b_genre , b_isbn),unsafe_allow_html=True)
-        if st.button("Add to cart"):
+		b_coverlink=i[2]
+		b_author=i[3]
+		b_rating_count = i[4]
+		b_rating = i[5]
+		b_date_of_publication=i[6]
+		b_publisher=i[7]
+		b_genre=i[8]
+		b_isbn=i[9]
+		st.markdown(head_message_temp.format(b_id, b_title , b_coverlink, b_author ,b_rating_count , b_rating , b_date_of_publication , b_publisher , b_genre , b_isbn),unsafe_allow_html=True)
+		if st.button("Add to cart"):
 			cust_no=st.text_input("Enter Contact no")
 			insertIntoCart(cust_no,b_isbn) 
-        if st.button("Checkout"):
+		if st.button("Checkout"):
 			cust_name=st.text_input("Enter Name")
 			cust_no=st.text_input("Enter Contact no")
 			cust_addr=st.text_area("Enter address")
