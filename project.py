@@ -7,7 +7,7 @@ from streamlit.state.session_state import SessionState
 
 @st.cache(allow_output_mutation=True)
 def createTableBooks():
-    connection1 = psycopg2.connect(database='ezbook',user='postgres',host='127.0.0.1',port='5432')
+    connection1 = psycopg2.connect(database='ezbook',user='aanchalnarendran',host='127.0.0.1',port='5432')
     connection1.autocommit = True
     cursor = connection1.cursor()
 
@@ -29,7 +29,7 @@ def createTableBooks():
 
 def insertBooks():
 
-    connection3 = psycopg2.connect(database='ezbook',user='postgres',password = 'ananya', host='127.0.0.1',port='5432')
+    connection3 = psycopg2.connect(database='ezbook',user='aanchalnarendran',password = 'ananya', host='127.0.0.1',port='5432')
     connection3.autocommit = True
     cursor = connection3.cursor()
 
@@ -43,7 +43,7 @@ def insertBooks():
     connection3.close()
 
 def shopBooks():
-    connection2 = psycopg2.connect(database='ezbook',user='postgres',password = 'ananya',host='127.0.0.1',port='5432')
+    connection2 = psycopg2.connect(database='ezbook',user='aanchalnarendran',password = 'ananya',host='127.0.0.1',port='5432')
     connection2.autocommit = True
     cursor = connection2.cursor()
 
@@ -57,7 +57,7 @@ def shopBooks():
     return listOfBooks
 
 def createCart():
-    connection1 = psycopg2.connect(database='ezbook',user='postgres',password = 'ananya',host='127.0.0.1',port='5432')
+    connection1 = psycopg2.connect(database='ezbook',user='aanchalnarendran',password = 'ananya',host='127.0.0.1',port='5432')
     connection1.autocommit = True
     cursor = connection1.cursor()
 
@@ -72,7 +72,7 @@ def createCart():
     connection1.close()
 
 def insertIntoCart(cust_no,isbn):
-    connection2 = psycopg2.connect(database='ezbook',user='postgres',password = 'ananya',host='127.0.0.1',port='5432')
+    connection2 = psycopg2.connect(database='ezbook',user='aanchalnarendran',password = 'ananya',host='127.0.0.1',port='5432')
     connection2.autocommit = True
     cursor = connection2.cursor()
 
@@ -85,6 +85,7 @@ def insertIntoCart(cust_no,isbn):
     cursor.execute(sql5,(cust_no,isbn))
     cartVal = list(cursor.fetchall())
     
+    print(cust_no)
     if len(cartVal) == 0:
         curCount = 1
         sql6 = '''insert into cart values(%s,%s,%s,%s)'''
@@ -98,7 +99,7 @@ def insertIntoCart(cust_no,isbn):
     connection2.close()
 
 def createHistory():
-    connection = psycopg2.connect(database='ezbook',user='postgres',password = 'ananya',host='127.0.0.1',port='5432')
+    connection = psycopg2.connect(database='ezbook',user='aanchalnarendran',password = 'ananya',host='127.0.0.1',port='5432')
     connection.autocommit = True
     cursor = connection.cursor()
 
@@ -114,7 +115,7 @@ def createHistory():
     connection.close()
 
 def insertIntoHistory(phonenum,isbn,count,price):
-    connection = psycopg2.connect(database='ezbook',user='postgres',password = 'ananya',host='127.0.0.1',port='5432')
+    connection = psycopg2.connect(database='ezbook',user='aanchalnarendran',password = 'ananya',host='127.0.0.1',port='5432')
     connection.autocommit = True
     cursor = connection.cursor()
 
@@ -126,7 +127,7 @@ def insertIntoHistory(phonenum,isbn,count,price):
     connection.close()
 
 def generateBill(cust_no):
-    connection = psycopg2.connect(database='ezbook',user='postgres',password = 'ananya',host='127.0.0.1',port='5432')
+    connection = psycopg2.connect(database='ezbook',user='aanchalnarendran',password = 'ananya',host='127.0.0.1',port='5432')
     connection.autocommit = True
     cursor = connection.cursor()
 
@@ -134,7 +135,9 @@ def generateBill(cust_no):
     sql = '''select * from cart where phonenum=%s;'''
     cursor.execute(sql,(cust_no,))
     listValues = cursor.fetchall()
-    
+
+    print("NO",cust_no)
+    print("****",listValues)
     totalPrice = 0.0
     curDate = date.today()
     for i in range(len(listValues)):
@@ -145,12 +148,14 @@ def generateBill(cust_no):
     sql3 = '''delete from cart where phonenum=%s;'''
     cursor.execute(sql3,(cust_no,))
 
+    print(listValues)
+
     connection.commit()
     connection.close()
     return(listValues,totalPrice)
 
 def addBook(bookid,title,coverlink,author,ratingcount,rating,publishingdate,publisher,genre,isbn):
-	connection = psycopg2.connect(database='ezbook',user='postgres',password = 'ananya',host='127.0.0.1',port='5432')
+	connection = psycopg2.connect(database='ezbook',user='aanchalnarendran',password = 'ananya',host='127.0.0.1',port='5432')
 	connection.autocommit = True
 	cursor = connection.cursor()
 
@@ -173,7 +178,7 @@ def addBook(bookid,title,coverlink,author,ratingcount,rating,publishingdate,publ
 	connection.close()
 
 def searchByTitle(title):
-    connection = psycopg2.connect(database='ezbook',user='postgres',password = 'ananya',host='127.0.0.1',port='5432')
+    connection = psycopg2.connect(database='ezbook',user='aanchalnarendran',password = 'ananya',host='127.0.0.1',port='5432')
     connection.autocommit = True
     cursor = connection.cursor()
 
@@ -189,7 +194,7 @@ def searchByTitle(title):
     return listOfTitles
 
 def searchByAuthor(author):
-	connection = psycopg2.connect(database='ezbook',user='postgres',password = 'ananya',host='127.0.0.1',port='5432')
+	connection = psycopg2.connect(database='ezbook',user='aanchalnarendran',password = 'ananya',host='127.0.0.1',port='5432')
 	connection.autocommit = True
 	cursor = connection.cursor()
 
@@ -205,7 +210,7 @@ def searchByAuthor(author):
 	
 
 def searchByGenre(genre):
-	connection = psycopg2.connect(database='ezbook',user='postgres',password = 'ananya',host='127.0.0.1',port='5432')
+	connection = psycopg2.connect(database='ezbook',user='aanchalnarendran',password = 'ananya',host='127.0.0.1',port='5432')
 	connection.autocommit = True
 	cursor = connection.cursor()
 
@@ -219,7 +224,7 @@ def searchByGenre(genre):
 	return book_details
 
 def createRequest():
-    connection = psycopg2.connect(database='ezbook',user='postgres',password = 'ananya',host='127.0.0.1',port='5432')
+    connection = psycopg2.connect(database='ezbook',user='aanchalnarendran',password = 'ananya',host='127.0.0.1',port='5432')
     connection.autocommit = True
     cursor = connection.cursor()
 
@@ -232,7 +237,7 @@ def createRequest():
     connection.close()
 
 def addRequest(cust_no,title):
-    connection = psycopg2.connect(database='ezbook',user='postgres',password = 'ananya',host='127.0.0.1',port='5432')
+    connection = psycopg2.connect(database='ezbook',user='aanchalnarendran',password = 'ananya',host='127.0.0.1',port='5432')
     connection.autocommit = True
     cursor = connection.cursor()
 
@@ -243,7 +248,7 @@ def addRequest(cust_no,title):
     connection.close()
 
 def createFeedback():
-    connection = psycopg2.connect(database='ezbook',user='postgres',password = 'ananya',host='127.0.0.1',port='5432')
+    connection = psycopg2.connect(database='ezbook',user='aanchalnarendran',password = 'ananya',host='127.0.0.1',port='5432')
     connection.autocommit = True
     cursor = connection.cursor()
 
@@ -257,7 +262,7 @@ def createFeedback():
     connection.close()
 
 def addFeedback(cust_no,title,feedback):
-    connection = psycopg2.connect(database='ezbook',user='postgres',password = 'ananya',host='127.0.0.1',port='5432')
+    connection = psycopg2.connect(database='ezbook',user='aanchalnarendran',password = 'ananya',host='127.0.0.1',port='5432')
     connection.autocommit = True
     cursor = connection.cursor()
 
@@ -424,13 +429,6 @@ def main_admin():
 				insertIntoCart(cust_no,b_isbn) 
 				cust_no=0
 
-	def printfun():
-		print("#######") 
-
-	def fun(b_id):
-		st.write("{}".format(b_id))
-		print("****")
-		print(b_id)
 	if choice=="Add Books":
 		with st.form('Add Book'):
 			st.session_state['Add Books'] = []
@@ -446,16 +444,6 @@ def main_admin():
 			b_isbn=st.text_input("ISBN"," ")
 			if st.form_submit_button('Add book'):
 				addBook(b_id, b_title , b_coverlink, b_author ,b_rating_count , b_rating , b_date_of_publication , b_publisher , b_genre , b_isbn)
-			
-
-			#if done:	
-				
-				#
-				
-				
-				#addBook(b_id, b_title , b_coverlink, b_author ,b_rating_count , b_rating , b_date_of_publication , b_publisher , b_genre , b_isbn)
-				
-				#st.experimental_rerun()
 
 
 	if choice == "Search Books By Title":
@@ -560,8 +548,28 @@ def main_admin():
 	# cust_name=st.text_input("Enter Name")
 		cust_number=st.text_input("Enter Contact no")
 		# cust_addr=st.text_area("Enter address")
-		amount=generateBill(cust_number) 
-		st.success("Total amount: {}".format(amount[1]))
+		values=generateBill(cust_number)
+		inCart = values[0]
+		amount=values[1]
+
+		all_titles = [i[1] for i in inCart]
+		postlist = st.sidebar.selectbox("In Cart",all_titles)
+		post_result = searchByTitle(postlist)
+		for i in post_result: #bookid,title,coverlink,author,ratingcount,rating,publishingdate,publisher,genre,isbn
+			b_id = i[0]
+			b_title = i[1]
+			b_coverlink=i[2]
+			b_author=i[3]
+			b_rating_count = i[4]
+			b_rating = i[5]
+			b_date_of_publication=i[6]
+			b_publisher=i[7]
+			b_genre=i[8]
+			b_isbn=i[9]
+			curPrice = b_rating*100
+			cust_no=st.text_input("Enter Contact no")
+			st.markdown(head_message_temp.format(b_title , b_coverlink, b_author, curPrice ,b_date_of_publication, b_genre, b_rating , b_isbn),unsafe_allow_html=True)
+		st.success("Total amount: {}".format(amount))
 
 def main_cust():
 	menu = ["Home","Shop Library","Search Books By Title" ,"Search Books By Author","Search Books By Genre","Request Books","Feedback" , "Checkout"]
@@ -624,14 +632,6 @@ def main_cust():
 			if st.button("Add to cart"):
 				insertIntoCart(cust_no,b_isbn) 
 				cust_no=0
-
-	def printfun():
-		print("#######") 
-
-	def fun(b_id):
-		st.write("{}".format(b_id))
-		print("****")
-		print(b_id)
 
 
 	if choice == "Search Books By Title":
@@ -733,11 +733,32 @@ def main_cust():
 			st.success("Post:{} saved".format(feedback))
 
 	if choice == "Checkout":
-		# cust_name=st.text_input("Enter Name")
+	# cust_name=st.text_input("Enter Name")
 		cust_number=st.text_input("Enter Contact no")
 		# cust_addr=st.text_area("Enter address")
-		amount=generateBill(cust_number) 
-		st.success("Total amount: {}".format(amount[1]))
+		values=generateBill(cust_number)
+		inCart = values[0]
+		amount=values[1]
+
+		all_titles = [i[1] for i in inCart]
+		postlist = st.sidebar.selectbox("In Cart",all_titles)
+		post_result = searchByTitle(postlist)
+		for i in post_result: #bookid,title,coverlink,author,ratingcount,rating,publishingdate,publisher,genre,isbn
+			b_id = i[0]
+			b_title = i[1]
+			b_coverlink=i[2]
+			b_author=i[3]
+			b_rating_count = i[4]
+			b_rating = i[5]
+			b_date_of_publication=i[6]
+			b_publisher=i[7]
+			b_genre=i[8]
+			b_isbn=i[9]
+			curPrice = b_rating*100
+			cust_no=st.text_input("Enter Contact no")
+			st.markdown(head_message_temp.format(b_title , b_coverlink, b_author, curPrice ,b_date_of_publication, b_genre, b_rating , b_isbn),unsafe_allow_html=True)
+		st.success("Total amount: {}".format(amount))
+
 
 
 # LOGIN
