@@ -3,6 +3,9 @@ import psycopg2
 from streamlit import cursor
 from datetime import date
 
+from streamlit.state.session_state import SessionState
+
+@st.cache(allow_output_mutation=True)
 def createTableBooks():
     connection1 = psycopg2.connect(database='ezbook',user='aanchalnarendran',host='127.0.0.1',port='5432')
     connection1.autocommit = True
@@ -147,15 +150,27 @@ def generateBill(cust_no):
     return(listValues,totalPrice)
 
 def addBook(bookid,title,coverlink,author,ratingcount,rating,publishingdate,publisher,genre,isbn):
-    connection = psycopg2.connect(database='ezbook',user='aanchalnarendran',host='127.0.0.1',port='5432')
-    connection.autocommit = True
-    cursor = connection.cursor()
+	connection = psycopg2.connect(database='ezbook',user='aanchalnarendran',host='127.0.0.1',port='5432')
+	connection.autocommit = True
+	cursor = connection.cursor()
 
-    sql = '''insert into books values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);'''
-    cursor.execute(sql,(bookid,title,coverlink,author,ratingcount,rating,publishingdate,publisher,genre,isbn))
+	print("bookid",bookid)
+	print("title",title)
+	print("coverlink",coverlink)
+	print("author",author)
+	print("ratingcount",ratingcount)
+	print("rating",rating)
+	print("publishing date",publishingdate)
+	print("publisher", publisher)
+	print("genre",genre)
+	print("isbn",isbn)
 
-    connection.commit()
-    connection.close()
+	sql = '''insert into books values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);'''
+	cursor.execute(sql,(bookid,title,coverlink,author,ratingcount,rating,publishingdate,publisher,genre,isbn))
+
+	#print(cursor.fetchall())
+	connection.commit()
+	connection.close()
 
 def searchByTitle(title):
     connection = psycopg2.connect(database='ezbook',user='aanchalnarendran',host='127.0.0.1',port='5432')
@@ -259,7 +274,7 @@ def buildDatabase(): #only execute once
 	createFeedback()
 	createHistory()
 	createRequest()
-
+	
 
 # Layout Templates
 html_temp = """
@@ -344,7 +359,7 @@ div.stButton > button:first-child {
 	if st.button("Shop Library"):
 		choice = "Shop Library"
 	if st.button("Add Books"):
-		choice = "Add Books"
+		choice = "AddBooks"
 	if st.button("Search Books"):
 		choice = "Search Books"
 	if st.button("Request Books"):
@@ -386,30 +401,38 @@ if choice == "Shop Library":
 			amount=generateBill(cust_number) 
 			st.success("Total amount: {}".format(amount[1]))
 
-if choice == "Add Books":
-	st.subheader("Add Books")
-	#create_table()
-	# pwd=st.text_input("Enter Passsword:",type="password")
-	# if st.button("Login"):
-	# 	if(pwd=="admin1234"):
-			# st.subheader("Add Books")
-	b_id = st.text_input("Enter book_id",key='id')
-	b_title = st.text_input("Enter Book Title",key='title')
-	b_coverlink=st.text_input("Enter coberlink")
-	b_author=st.text_input("Enter Author")
-	b_rating_count = st.text_input("Enter Rating Count")
-	b_rating = st.text_input("Enter Rating")
-	b_date_of_publication=st.text_input("Enter Date of Publication")
-	b_publisher=st.text_input("Enter Publisher")
-	b_genre=st.text_input("Enter Genre")
-	b_isbn=st.text_input("ISBN")
-	if st.button("Add"):	
-		addBook(b_id, b_title , b_coverlink, b_author ,b_rating_count , b_rating , b_date_of_publication , b_publisher , b_genre , b_isbn)
-		st.success("Post:{} saved".format(b_title))	
-		# else:
-		# 	st.text("ACCESS DENIED")
+def printfun():
+	print("#######") 
 
+def fun(b_id):
+	st.write("{}".format(b_id))
+	print("****")
+	print(b_id)
+if choice=="AddBooks":
+	with st.form('AddBook'):
+		st.session_state['AddBooks'] = []
+		b_id = st.number_input("Enter book_id")
+		b_title = st.text_input("Enter Book Title")
+		b_coverlink=st.text_input("Enter coverlink")
+		b_author=st.text_input("Enter Author")
+		b_rating_count = st.number_input("Enter Rating Count")
+		b_rating = float(st.number_input("Enter Rating"))
+		b_date_of_publication=st.text_input("Enter Date of Publication")
+		b_publisher=st.text_input("Enter Publisher")
+		b_genre=st.text_input("Enter Genre")
+		b_isbn=st.text_input("ISBN"," ")
+		if st.form_submit_button('Add book'):
+			addBook(b_id, b_title , b_coverlink, b_author ,b_rating_count , b_rating , b_date_of_publication , b_publisher , b_genre , b_isbn)
+		
 
+		#if done:	
+			
+			#
+			
+			
+			#addBook(b_id, b_title , b_coverlink, b_author ,b_rating_count , b_rating , b_date_of_publication , b_publisher , b_genre , b_isbn)
+			
+			#st.experimental_rerun()
 
 
 if choice == "Search Books":
