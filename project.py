@@ -76,6 +76,10 @@ def insertIntoCart(cust_no,isbn):
     connection2.autocommit = True
     cursor = connection2.cursor()
 
+    if len(cust_no) != 10 and cust_no.isdecimal():
+        print("Invalid Customer number")
+        return
+		
     sql4 = '''select rating from books where isbn = %s;'''
     cursor.execute(sql4,(isbn,))
     valuesCur = list(cursor.fetchall())
@@ -85,7 +89,6 @@ def insertIntoCart(cust_no,isbn):
     cursor.execute(sql5,(cust_no,isbn))
     cartVal = list(cursor.fetchall())
     
-    print(cust_no)
     if len(cartVal) == 0:
         curCount = 1
         sql6 = '''insert into cart values(%s,%s,%s,%s)'''
@@ -131,7 +134,10 @@ def viewCart(cust_no):
     connection.autocommit = True
     cursor = connection.cursor()
 
-    #createBill
+    if len(cust_no) != 10 and cust_no.isdecimal():
+        print("Invalid Customer number")
+        return
+
     sql = '''select * from cart where phonenum=%s;'''
     cursor.execute(sql,(cust_no,))
     listValues = cursor.fetchall()
@@ -140,7 +146,6 @@ def viewCart(cust_no):
     for i in range(len(listValues)):
         totalPrice+= listValues[i][-1]
     
-    print(listValues)
     connection.commit()
     connection.close()
     
@@ -151,7 +156,10 @@ def generateBill(cust_no):
     connection.autocommit = True
     cursor = connection.cursor()
 
-    #createBill
+    if len(cust_no) != 10 and cust_no.isdecimal():
+        print("Invalid Customer number")
+        return
+
     sql = '''select * from cart where phonenum=%s;'''
     cursor.execute(sql,(cust_no,))
     listValues = cursor.fetchall()
@@ -175,16 +183,31 @@ def addBook(bookid,title,coverlink,author,ratingcount,rating,publishingdate,publ
 	connection.autocommit = True
 	cursor = connection.cursor()
 
-	print("bookid",bookid)
-	print("title",title)
-	print("coverlink",coverlink)
-	print("author",author)
-	print("ratingcount",ratingcount)
-	print("rating",rating)
-	print("publishing date",publishingdate)
-	print("publisher", publisher)
-	print("genre",genre)
-	print("isbn",isbn)
+	if not (bookid.isdecimal()):
+		print("Invalid Book Id")
+		return
+	elif not (title.isalpha()):
+		print("Invalid Book Title")
+		return
+	elif not (author.isalpha()):
+		print("Invalid Author")
+		return
+	elif not (rating.isdecimal()):
+		print("Invalid Rating Count")
+		return
+	elif not (rating.isdecimal()):
+		print("Invalid Ratings")
+		return
+	elif not (publisher.isalpha()):
+		print("Invalid Publisher")
+		return
+	elif not (genre.isalpha()):
+		print("Invalid Genre")
+		return
+	elif not (isbn.isdecimal()):
+		print("Invalid ISBN")
+		return
+
 
 	sql = '''insert into books values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);'''
 	cursor.execute(sql,(bookid,title,coverlink,author,ratingcount,rating,publishingdate,publisher,genre,isbn))
@@ -269,11 +292,19 @@ def addRequest(cust_no,title):
     connection.autocommit = True
     cursor = connection.cursor()
 
+    if (len(cust_no)!=10):
+        print("Invalid Customer Number")
+        return False
+    elif not (title.isalpha()):
+        print("Invalid Book Title")  
+        return False
+
     sql = '''insert into request values(%s,%s);'''
     cursor.execute(sql,(cust_no,title))
 
     connection.commit()
     connection.close()
+    return True
 
 def createFeedback():
     connection = psycopg2.connect(database='ezbook',user='aanchalnarendran',password = 'ananya',host='127.0.0.1',port='5432')
@@ -293,6 +324,13 @@ def addFeedback(cust_no,title,feedback):
     connection = psycopg2.connect(database='ezbook',user='aanchalnarendran',password = 'ananya',host='127.0.0.1',port='5432')
     connection.autocommit = True
     cursor = connection.cursor()
+
+    if not (cust_no.isccdecimal() and len(cust_no)!=10):
+        print("Invalid Book Id")
+        return
+    elif not (title.isalpha()):
+        print("Invalid Book Title")  
+        return
 
     sql = '''insert into feedback values(%s,%s,%s);'''
     cursor.execute(sql,(cust_no,title,feedback))
@@ -560,8 +598,7 @@ def main_admin():
 		st.subheader("Request Books")
 		book_name = st.text_input("Enter Book Name")
 		cust_no=st.text_input("Enter Contact no")
-		if st.button("Add"):
-			addRequest(cust_no,book_name) 
+		if st.button("Add") and addRequest(cust_no,book_name):
 			st.success("Post:{} saved".format(book_name))	
 
 
