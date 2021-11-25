@@ -126,6 +126,26 @@ def insertIntoHistory(phonenum,isbn,count,price):
     connection.commit()
     connection.close()
 
+def viewCart(cust_no):
+    connection = psycopg2.connect(database='ezbook',user='aanchalnarendran',password = 'ananya',host='127.0.0.1',port='5432')
+    connection.autocommit = True
+    cursor = connection.cursor()
+
+    #createBill
+    sql = '''select * from cart where phonenum=%s;'''
+    cursor.execute(sql,(cust_no,))
+    listValues = cursor.fetchall()
+
+    totalPrice = 0.0
+    for i in range(len(listValues)):
+        totalPrice+= listValues[i][-1]
+    
+    print(listValues)
+    connection.commit()
+    connection.close()
+    
+    return listValues,totalPrice
+
 def generateBill(cust_no):
     connection = psycopg2.connect(database='ezbook',user='aanchalnarendran',password = 'ananya',host='127.0.0.1',port='5432')
     connection.autocommit = True
@@ -136,8 +156,6 @@ def generateBill(cust_no):
     cursor.execute(sql,(cust_no,))
     listValues = cursor.fetchall()
 
-    print("NO",cust_no)
-    print("****",listValues)
     totalPrice = 0.0
     curDate = date.today()
     for i in range(len(listValues)):
@@ -147,8 +165,6 @@ def generateBill(cust_no):
 
     sql3 = '''delete from cart where phonenum=%s;'''
     cursor.execute(sql3,(cust_no,))
-
-    print(listValues)
 
     connection.commit()
     connection.close()
@@ -207,7 +223,19 @@ def searchByAuthor(author):
 	
 	return book_details
 
+def searchByISBN(ISBN):
+	connection = psycopg2.connect(database='ezbook',user='aanchalnarendran',password = 'ananya',host='127.0.0.1',port='5432')
+	connection.autocommit = True
+	cursor = connection.cursor()
+
+	sql = '''select * from books where isbn=%s;'''
+	cursor.execute(sql,(ISBN,))
+
+	book_details=cursor.fetchall()
+	connection.commit()
+	connection.close()
 	
+	return book_details	
 
 def searchByGenre(genre):
 	connection = psycopg2.connect(database='ezbook',user='aanchalnarendran',password = 'ananya',host='127.0.0.1',port='5432')
@@ -365,7 +393,7 @@ def login(blocks):
     return blocks[1].text_input('Password')
 
 def main_admin(): 
-	menu = menu = ["Home","Shop Library","Add Books","Search Books By Title" ,"Search Books By Author","Search Books By Genre","Request Books","Feedback","Checkout"]
+	menu = menu = ["Home","Shop Library","Add Books","Search Books By Title" ,"Search Books By Author","Search Books By Genre","Request Books","Feedback","View Cart","Checkout"]
 	choice = st.sidebar.selectbox("Menu",menu)
 
 	if choice == "Home":
@@ -398,6 +426,8 @@ def main_admin():
 			choice = "Request Books"
 		if st.button("Feedback"):
 			choice = "Feedback"
+		if st.button("View Cart"):
+			choice="View Cart"
 		if st.button("Checkout"):
 			choice = "Checkout"
 
@@ -544,6 +574,29 @@ def main_admin():
 			addFeedback(cust_no,book_name,feedback) 
 			st.success("Post:{} saved".format(feedback))
 
+	if choice=="View Cart":
+		st.subheader("View Cart")
+		cust_no=st.text_input("Enter contact no",key='contact')
+		cart,amount=viewCart(cust_no)
+		all_titles = [j[1] for j in cart]
+		postlist = st.sidebar.selectbox("In Cart",all_titles)
+		post_result = searchByISBN(postlist)
+		for i in post_result: #bookid,title,coverlink,author,ratingcount,rating,publishingdate,publisher,genre,isbn
+			b_id = i[0]
+			b_title = i[1]
+			b_coverlink=i[2]
+			b_author=i[3]
+			b_rating_count = i[4]
+			b_rating = i[5]
+			b_date_of_publication=i[6]
+			b_publisher=i[7]
+			b_genre=i[8]
+			b_isbn=i[9]
+			curPrice = b_rating*100
+			cust_no=st.text_input("Enter Contact no")
+			st.markdown(head_message_temp.format(b_title , b_coverlink, b_author, curPrice ,b_date_of_publication, b_genre, b_rating , b_isbn),unsafe_allow_html=True)
+		st.success("Total amount: {}".format(amount))
+
 	if choice == "Checkout":
 	# cust_name=st.text_input("Enter Name")
 		cust_number=st.text_input("Enter Contact no")
@@ -572,7 +625,7 @@ def main_admin():
 		st.success("Total amount: {}".format(amount))
 
 def main_cust():
-	menu = ["Home","Shop Library","Search Books By Title" ,"Search Books By Author","Search Books By Genre","Request Books","Feedback" , "Checkout"]
+	menu = ["Home","Shop Library","Search Books By Title" ,"Search Books By Author","Search Books By Genre","Request Books","Feedback" ,"View Cart", "Checkout"]
 	choice = st.sidebar.selectbox("Menu",menu)
 
 	if choice == "Home":
@@ -603,6 +656,8 @@ def main_cust():
 			choice = "Request Books"
 		if st.button("Feedback"):
 			choice = "Feedback"
+		if st.button("View Cart"):
+			choice="View Cart"
 		if st.button("Checkout"):
 			choice = "Checkout"	
 
@@ -731,6 +786,29 @@ def main_cust():
 		if st.button("Add"):
 			addFeedback(cust_no,book_name,feedback) 
 			st.success("Post:{} saved".format(feedback))
+
+	if choice=="View Cart":
+		st.subheader("View Cart")
+		cust_no=st.text_input("Enter contact no",key='contact')
+		cart,amount=viewCart(cust_no)
+		all_titles = [j[1] for j in cart]
+		postlist = st.sidebar.selectbox("In Cart",all_titles)
+		post_result = searchByISBN(postlist)
+		for i in post_result: #bookid,title,coverlink,author,ratingcount,rating,publishingdate,publisher,genre,isbn
+			b_id = i[0]
+			b_title = i[1]
+			b_coverlink=i[2]
+			b_author=i[3]
+			b_rating_count = i[4]
+			b_rating = i[5]
+			b_date_of_publication=i[6]
+			b_publisher=i[7]
+			b_genre=i[8]
+			b_isbn=i[9]
+			curPrice = b_rating*100
+			cust_no=st.text_input("Enter Contact no")
+			st.markdown(head_message_temp.format(b_title , b_coverlink, b_author, curPrice ,b_date_of_publication, b_genre, b_rating , b_isbn),unsafe_allow_html=True)
+		st.success("Total amount: {}".format(amount))
 
 	if choice == "Checkout":
 	# cust_name=st.text_input("Enter Name")
